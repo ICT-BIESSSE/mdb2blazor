@@ -1,0 +1,23 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace {{ namespace }}.Models
+{
+    [Table("{{ table_name }}")]
+    public class {{ class_name }}
+    {
+{% for prop in properties %}
+{% for annotation in prop.annotations %}
+        {{ annotation }}
+{% endfor %}
+        public {{ prop.type }} {{ prop.name }} { get; set; }{% if prop.type == 'string' %} = string.Empty;{% elif not prop.nullable and prop.type != 'string' and not prop.type.endswith('?') and prop.type != 'byte[]' %} = default!;{% elif prop.type == 'byte[]' %} = Array.Empty<byte>();{% else %}{% endif %}
+
+{% endfor %}
+{% if navigation_properties %}
+        // Proprietà di navigazione
+{% for nav in navigation_properties %}
+        public virtual {{ nav.type }}? {{ nav.name }} { get; set; }
+{% endfor %}
+{% endif %}
+    }
+}
