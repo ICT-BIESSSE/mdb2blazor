@@ -1,0 +1,46 @@
+using {{ namespace }}.Data;
+using {{ namespace }}.Data.Services;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Aggiungi servizi Blazor Server
+builder.Services.AddRazorPages();
+builder.Services.AddServerSideBlazor();
+
+// Configura DbContext con ODBC Access
+builder.Services.AddDbContext<AppDbContext>(options =>
+{
+    // Usa la connection string dall'appsettings.json
+    // Nota: per EF Core con ODBC su Access, installare il provider appropriato
+    // Per sviluppo locale, considerare SQLite come alternativa
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+        ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+    
+    // Usare SQLite per sviluppo (decommentare e installare Microsoft.EntityFrameworkCore.Sqlite)
+    // options.UseSqlite(connectionString);
+    
+    // Per produzione con Access via ODBC (sperimentale)
+    options.UseJet(connectionString, DataAccessProviderType.Odbc);
+});
+
+// Registra i servizi per ogni tabella
+{% for service in services %}
+builder.Services.AddScoped<I{{ service }}Service, {{ service }}Service>();
+{% endfor %}
+
+var app = builder.Build();
+
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Error");
+    app.UseHsts();
+}
+
+app.UseHttpsRedirection();
+app.UseStaticFiles();
+app.UseRouting();
+
+app.MapBlazorHub();
+app.MapFallbackToPage("/_Host");
+
+app.Run();

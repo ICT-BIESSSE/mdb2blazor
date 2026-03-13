@@ -1,0 +1,55 @@
+@page "/{{ class_name | lower }}/delete/{Id:{{ pk_type | lower }}}"
+@inject I{{ class_name }}Service {{ class_name }}Service
+@inject NavigationManager NavigationManager
+
+<h3>{{ class_name }} - Conferma Eliminazione</h3>
+
+@if (model == null)
+{
+    <p><em>Caricamento in corso...</em></p>
+}
+else
+{
+    <div class="alert alert-warning">
+        <strong>Attenzione!</strong> Stai per eliminare il seguente record. L'operazione non è reversibile.
+    </div>
+
+    <table class="table">
+        <tbody>
+{% for field in display_fields %}
+            <tr>
+                <th>{{ field.label }}</th>
+                <td>@model.{{ field.prop_name }}</td>
+            </tr>
+{% endfor %}
+        </tbody>
+    </table>
+
+    <div class="page-actions">
+        <button class="btn btn-danger" @onclick="ConfirmDelete">Elimina</button>
+        <button class="btn btn-secondary" @onclick="GoBack">Annulla</button>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public {{ pk_type }} Id { get; set; }
+
+    private {{ class_name }}? model;
+
+    protected override async Task OnInitializedAsync()
+    {
+        model = await {{ class_name }}Service.GetByIdAsync(Id);
+    }
+
+    private async Task ConfirmDelete()
+    {
+        await {{ class_name }}Service.DeleteAsync(Id);
+        NavigationManager.NavigateTo("/{{ class_name | lower }}");
+    }
+
+    private void GoBack()
+    {
+        NavigationManager.NavigateTo("/{{ class_name | lower }}");
+    }
+}

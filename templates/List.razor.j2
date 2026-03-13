@@ -1,0 +1,69 @@
+@page "/{{ class_name | lower }}"
+@inject I{{ class_name }}Service {{ class_name }}Service
+@inject NavigationManager NavigationManager
+
+<h3>{{ class_name }} - Elenco</h3>
+
+<div class="page-actions">
+    <button class="btn btn-primary" @onclick="NavigateToCreate">+ Nuovo</button>
+</div>
+
+@if (items == null)
+{
+    <p><em>Caricamento in corso...</em></p>
+}
+else if (!items.Any())
+{
+    <p>Nessun record trovato.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+{% for field in display_fields %}
+                <th>{{ field.label }}</th>
+{% endfor %}
+                <th>Azioni</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in items)
+            {
+                <tr>
+{% for field in display_fields %}
+                    <td>@item.{{ field.prop_name }}</td>
+{% endfor %}
+                    <td>
+                        <button class="btn btn-sm btn-warning" @onclick="() => NavigateToEdit(item.{{ pk_prop }})">Modifica</button>
+                        <button class="btn btn-sm btn-danger" @onclick="() => NavigateToDelete(item.{{ pk_prop }})">Elimina</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<{{ class_name }}>? items;
+
+    protected override async Task OnInitializedAsync()
+    {
+        items = await {{ class_name }}Service.GetAllAsync();
+    }
+
+    private void NavigateToCreate()
+    {
+        NavigationManager.NavigateTo("/{{ class_name | lower }}/create");
+    }
+
+    private void NavigateToEdit({{ pk_type }} id)
+    {
+        NavigationManager.NavigateTo($"/{{ class_name | lower }}/edit/{id}");
+    }
+
+    private void NavigateToDelete({{ pk_type }} id)
+    {
+        NavigationManager.NavigateTo($"/{{ class_name | lower }}/delete/{id}");
+    }
+}

@@ -1,0 +1,11 @@
+@page "/Error"
+@using Microsoft.AspNetCore.Diagnostics
+
+<h3>Errore</h3>
+
+<p>Si è verificato un errore durante l'elaborazione della richiesta.</p>
+
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState>? authenticationState { get; set; }
+}

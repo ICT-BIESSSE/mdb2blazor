@@ -1,0 +1,26 @@
+using Microsoft.EntityFrameworkCore;
+using {{ namespace }}.Models;
+
+namespace {{ namespace }}.Data
+{
+    public class AppDbContext : DbContext
+    {
+        public AppDbContext(DbContextOptions<AppDbContext> options)
+            : base(options)
+        {
+        }
+
+{% for ds in db_sets %}
+        public DbSet<{{ ds.class_name }}> {{ ds.db_set_name }} { get; set; } = default!;
+{% endfor %}
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+{% for ds in db_sets %}
+            modelBuilder.Entity<{{ ds.class_name }}>().ToTable("{{ ds.table_name }}");
+{% endfor %}
+        }
+    }
+}

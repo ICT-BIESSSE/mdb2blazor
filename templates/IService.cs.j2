@@ -1,0 +1,13 @@
+using {{ namespace }}.Models;
+
+namespace {{ namespace }}.Data.Services
+{
+    public interface I{{ class_name }}Service
+    {
+        Task<List<{{ class_name }}>> GetAllAsync();
+        Task<{{ class_name }}?> GetByIdAsync({{ pk_type }} id);
+        Task<{{ class_name }}> CreateAsync({{ class_name }} entity);
+        Task<{{ class_name }}?> UpdateAsync({{ class_name }} entity);
+        Task<bool> DeleteAsync({{ pk_type }} id);
+    }
+}

@@ -1,0 +1,42 @@
+@page "/{{ class_name | lower }}/create"
+@inject I{{ class_name }}Service {{ class_name }}Service
+@inject NavigationManager NavigationManager
+
+<h3>{{ class_name }} - Nuovo Record</h3>
+
+<EditForm Model="model" OnValidSubmit="HandleSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+{% for field in form_fields %}
+    <div class="form-group">
+        <label for="{{ field.prop_name }}">{{ field.label }}</label>
+{% if field.is_bool %}
+        <{{ field.input_component }} id="{{ field.prop_name }}" @bind-Value="model.{{ field.prop_name }}" class="form-check-input" />
+{% else %}
+        <{{ field.input_component }} id="{{ field.prop_name }}" @bind-Value="model.{{ field.prop_name }}" class="form-control" />
+{% endif %}
+        <ValidationMessage For="@(() => model.{{ field.prop_name }})" />
+    </div>
+{% endfor %}
+
+    <div class="page-actions">
+        <button type="submit" class="btn btn-primary">Salva</button>
+        <button type="button" class="btn btn-secondary" @onclick="GoBack">Annulla</button>
+    </div>
+</EditForm>
+
+@code {
+    private {{ class_name }} model = new();
+
+    private async Task HandleSubmit()
+    {
+        await {{ class_name }}Service.CreateAsync(model);
+        NavigationManager.NavigateTo("/{{ class_name | lower }}");
+    }
+
+    private void GoBack()
+    {
+        NavigationManager.NavigateTo("/{{ class_name | lower }}");
+    }
+}
