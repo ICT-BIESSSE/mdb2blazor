@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# IDEs
+.vscode/
+.idea/
+*.suo
+*.user
+
+# Output del generatore (non includere nel repo)
+output/
+
+# File temporanei
+*.tmp
+*.bak
